@@ -26,8 +26,11 @@ Output is written to `dist/ice-cream-fe/`.
 
 ## Architecture Overview
 
-The app is built with Angular using standalone components and the new `@if`/`@for` control-flow syntax. State within components uses Angular signals (`signal`, `computed`) to guarantee fine-grained reactivity without manual change-detection calls. Three services (`AuthService`, `IceCreamService`, `OrderService`) encapsulate all HTTP communication and are provided at root. Authentication is handled by a functional HTTP interceptor that reads the JWT from `AuthService` and attaches it as a `Bearer` token only to requests targeting the API base URL, plus a functional route guard that redirects unauthenticated users away from protected pages like order history. The project intentionally avoids a global state library; cart state lives locally in the `MenuComponent` because it is ephemeral, while persistent data (orders, menu) is always fetched fresh from the server.
+The app is built with Angular using standalone components. Component state is managed with Angular Signals (signal, computed) to ensure fine-grained reactivity without manual change detection.
 
+For asynchronous data flows, the app leverages RxJS. All HTTP communication in AuthService, IceCreamService, and OrderService is handled via Angular’s HttpClient, which returns RxJS Observables.
+
+Authentication is implemented using a functional HTTP interceptor that retrieves the JWT from AuthService and attaches it as a Bearer token only for API requests. Route protection is enforced with a functional guard that uses RxJS streams to determine authentication state and redirects unauthenticated users away from protected routes such as order history.
 ## Project Structure
 
 ```
