@@ -1,0 +1,15 @@
+<nav class="navbar">
+  <a routerLink="/menu" class="brand">Ice Cream Shop</a>
+
+  <div class="nav-links">
+    <a routerLink="/menu" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Menu</a>
+
+    @if (authService.isLoggedIn()) {
+      <a routerLink="/orders" routerLinkActive="active">My Orders</a>
+      <button class="btn-link" (click)="logout()">Logout</button>
+    } @else {
+      <a routerLink="/login" routerLinkActive="active">Login</a>
+      <a routerLink="/register" routerLinkActive="active">Register</a>
+    }
+  </div>
+</nav>

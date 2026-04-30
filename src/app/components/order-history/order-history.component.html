@@ -1,0 +1,39 @@
+<div class="order-history-page">
+  <h2>Order History</h2>
+
+  @if (loading()) {
+    <div class="loading">Loading orders...</div>
+  }
+
+  @if (error()) {
+    <div class="error-message">{{ error() }}</div>
+  }
+
+  @if (!loading() && orders().length === 0 && !error()) {
+    <div class="empty-state">
+      <p>No orders yet. Head to the menu to place your first order!</p>
+    </div>
+  }
+
+  <div class="orders-list">
+    @for (order of orders(); track order.id) {
+      <div class="order-card">
+        <div class="order-header">
+          <span class="order-id">Order #{{ order.id }}</span>
+          <span class="order-date">{{ order.createdAt | date: 'medium' }}</span>
+        </div>
+        <div class="order-items">
+          @for (item of order.items; track item.id) {
+            <div class="order-item">
+              <span>{{ item.iceCream.name }} x{{ item.quantity }}</span>
+              <span>{{ +item.priceAtTime * item.quantity | currency }}</span>
+            </div>
+          }
+        </div>
+        <div class="order-total">
+          <strong>Total: {{ +order.totalPrice | currency }}</strong>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,94 @@
+<div class="menu-page">
+  <h2>Ice Cream Menu</h2>
+
+  @if (error()) {
+    <div class="error-message">{{ error() }}</div>
+  }
+
+  @if (orderSuccess()) {
+    <div class="success-message">{{ orderSuccess() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="loading">Loading menu...</div>
+  } @else {
+    <div class="menu-layout">
+      <div class="flavor-grid">
+        @for (flavor of flavors(); track flavor.id) {
+          <div class="flavor-card" [class.out-of-stock]="!flavor.available || flavor.stock === 0">
+            <div class="flavor-info">
+              <h3>{{ flavor.name }}</h3>
+              <p class="description">{{ flavor.description }}</p>
+              <p class="price">${{ (+flavor.price).toFixed(2) }}</p>
+              <p class="stock-status">
+                @if (flavor.available && flavor.stock > 0) {
+                  <span class="in-stock">In Stock ({{ flavor.stock }})</span>
+                } @else {
+                  <span class="out-of-stock-label">Out of Stock</span>
+                }
+              </p>
+            </div>
+
+            <div class="flavor-actions">
+              @if (getCartQuantity(flavor.id) > 0) {
+                <div class="quantity-controls">
+                  <button class="btn btn-sm" (click)="updateQuantity(flavor.id, -1)">-</button>
+                  <span class="quantity">{{ getCartQuantity(flavor.id) }}</span>
+                  <button
+                    class="btn btn-sm"
+                    (click)="updateQuantity(flavor.id, 1)"
+                    [disabled]="getCartQuantity(flavor.id) >= flavor.stock"
+                  >
+                    +
+                  </button>
+                </div>
+              } @else {
+                <button
+                  class="btn btn-primary btn-sm"
+                  (click)="addToCart(flavor)"
+                  [disabled]="!flavor.available || flavor.stock === 0"
+                >
+                  Add to Cart
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (cart().length > 0) {
+        <div class="cart-panel">
+          <h3>Your Order</h3>
+          <div class="cart-items">
+            @for (item of cart(); track item.iceCream.id) {
+              <div class="cart-item">
+                <div class="cart-item-info">
+                  <span class="cart-item-name">{{ item.iceCream.name }}</span>
+                  <span class="cart-item-qty">x{{ item.quantity }}</span>
+                </div>
+                <div class="cart-item-right">
+                  <span class="cart-item-price"
+                    >${{ (+item.iceCream.price * item.quantity).toFixed(2) }}</span
+                  >
+                  <button class="btn-remove" (click)="removeFromCart(item.iceCream.id)">
+                    &#x2715;
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+          <div class="cart-total">
+            <strong>Total: ${{ cartTotal().toFixed(2) }}</strong>
+          </div>
+          <button
+            class="btn btn-primary btn-block"
+            (click)="placeOrder()"
+            [disabled]="orderLoading()"
+          >
+            {{ orderLoading() ? 'Placing Order...' : 'Place Order' }}
+          </button>
+        </div>
+      }
+    </div>
+  }
+</div>
